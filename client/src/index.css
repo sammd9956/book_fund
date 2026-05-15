@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+
+
+:root{
+  --primary-color:#6D5DF6;
+  --primary-light:#EBE5FC;
+  --indigo-500:#6610F2;
+  --outline-border:#7749F8;
+  --purple-purple-500:#6F42C1;
+  --white:#FFF;
+  --black:#000000;
+  --gray-800:#343A40;
+  --leading-heading:#68717A;
+  --card-border:#FFFDF5;
+  --page-background:#F8F9FA;
+  --gray-300:#DEE2E6;
+  --gray-500:#ADB5BD;
+  --primary-color-dark:#5227CC;
+  --radio-border:#ABB5BE;
+  --blood-red:#F00;
+  --cloud-gray:#D9D9D9;
+  --charcoal-gray:#535353;
+  --soft-lavender:#A07EFF;
+  --bright-green:#00BD32;
+  --emrald-green:#00B94A;
+  --electric-blue:#0004FF;
+  --spring-green:#009754;
+  --soft-gray:#F2F2F2;
+  --slate-gray:#747474;
+  --silver-gray:#C9C9C9;
+  --ivary-mist:#FCFBF8;
+  --ice-gray:#E6E7EB;
+  --mist-gray:#E2E2E2;
+  --frosted-blue:#C9D5E2;
+}
+
+
+@theme{
+  --color-primary-color:var(--primary-color);
+  --color-primary-light:var(--primary-light);
+  --color-indigo-500:var(--indigo-500);
+  --color-outline-border:var(--outline-border);
+  --color-purple-purple-500:var(--purple-purple-500);
+  --color-white:var(--white);
+  --color-black:var(--black);
+  --color-gray-800:var(--gray-800);
+  --color-leading-heading:var(--leading-heading);
+  --color-card-border:var(--card-border);
+  --color-page-background:var(--page-background);
+  --color-gray-300:var(--gray-300);
+  --color-gray-500:var(--gray-500);
+  --color-primary-color-dark:var(--primary-color-dark);
+  --color-radio-border:var(--radio-border);
+  --color-blood-red:var(--blood-red);
+  --color-cloud-gray:var(--cloud-gray);
+  --color-charcoal-gray:var(--charcoal-gray);
+  --color-soft-lavender:var(--soft-lavender);
+  --color-bright-green:var(--bright-green);
+  --color-emrald-green:var(--emrald-green);
+  --color-electric-blue:var(--electric-blue);
+  --color-spring-green:var(--spring-green);
+  --color-soft-gray:var(--soft-gray);
+  --color-slate-gray:var(--slate-gray);
+  --color-silver-gray:var(--silver-gray);
+  --color-ivary-mist:var(--ivary-mist);
+  --color-ice-gray:var(--ice-gray);
+  --color-mist-gray:var(--mist-gray);
+  --color-frosted-blue:var(--frosted-blue);
+}
+
+
+
