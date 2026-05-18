@@ -8,8 +8,8 @@ today.setHours(0, 0, 0, 0)
 
 const previousMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1)
 
-export default function MyCalendarRange() {
-    const [date, setDate] = useState(undefined)
+export default function MyCalendarRange({date, setDate}) {
+    // const [date, setDate] = useState(undefined)
     const [open, setOpen] = useState(false)
     const [month, setMonth] = useState(previousMonth)
 
@@ -33,6 +33,7 @@ export default function MyCalendarRange() {
             document.removeEventListener("mousedown", handleClickOutside)
     }, [])
 
+        
         
 
     return (

@@ -1,4 +1,4 @@
-const { pool } = require('../../config/db');
+import { pool } from '../../config/db.js';
 
 const findUserByEmail = (email) => {
     
@@ -8,4 +8,4 @@ const findUserByEmail = (email) => {
     });
 };
 
-module.exports = { findUserByEmail };
+export {findUserByEmail};

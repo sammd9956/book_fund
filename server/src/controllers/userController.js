@@ -1,10 +1,10 @@
-const { TryCatch } = require('../../middleware/error');
-const { sendToken } = require('../../utils/feature');
-const { ErrorHandler } = require('../../utils/utility');
-const User = require('../models/userModel');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const { pool } = require('../../config/db');
+import {TryCatch} from '../../middleware/error.js';
+import { sendToken } from '../../utils/feature.js';
+import { ErrorHandler } from '../../utils/utility.js';
+import {findUserByEmail} from '../models/userModel.js';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import { pool } from '../../config/db.js';
 
 
 // signup 
@@ -32,19 +32,27 @@ const userSignUp = TryCatch( async (req, res, next) => {
 //sign-in
 const userSignIn = TryCatch(async (req, res, next) => {
     const { email, password } = req.body;
+
+    console.log("email",email);
+    console.log("pass",password);
+    
     
     if (!email) {
         return next(new ErrorHandler("Email is required", 400));
     }
-    const existingUser = await User.findUserByEmail(email);
-
+        
+     const existingUser = await findUserByEmail(email);
+     console.log(existingUser);
+     
     if (!existingUser) {
         return next(new ErrorHandler("Invalid User", 401));
     }
+    
     const isMatch = await bcrypt.compare(password, existingUser.password);
     if(!isMatch) {
         return next (new ErrorHandler ("Invalid user or password", 404))
     }
+   
     sendToken(res, existingUser, 200, `Welcome Back ${existingUser.user_name.toUpperCase()}`)
    
 });
@@ -58,4 +66,4 @@ const getMyProfile = TryCatch( async (req, res, next) => {
     res.status(200).json({success: true, user})
 
 })
-module.exports = { userSignUp, userSignIn, getMyProfile };
+export { userSignUp, userSignIn, getMyProfile };

@@ -1,6 +1,7 @@
-const jwt = require('jsonwebtoken');
-const { BOOK_FUND_TOKEN } = require('../constants/config');
-require('dotenv').config()
+import jwt from 'jsonwebtoken';
+import { BOOK_FUND_TOKEN } from '../constants/config.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const cookieOptions = {
   maxAge: 15 * 24 * 60 * 60 * 1000,
@@ -17,4 +18,4 @@ const sendToken = (res, user, code, message) => {
   });
 };
 
-module.exports = {cookieOptions, sendToken}
+export {cookieOptions, sendToken}

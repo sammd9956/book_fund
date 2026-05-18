@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken');
-const { TryCatch } = require('./error');
-const { ErrorHandler } = require('../utils/utility');
-const { BOOK_FUND_TOKEN } = require('../constants/config');
+import jwt from 'jsonwebtoken';
+import {TryCatch} from './error.js';
+import {ErrorHandler} from '../utils/utility.js';
+import {BOOK_FUND_TOKEN} from '../constants/config.js';
 
 const isAuthenticated = TryCatch( async (req, res, next) => {
 const token = req.cookies[BOOK_FUND_TOKEN];
@@ -13,4 +13,4 @@ next()
 
 })
 
-module.exports = {isAuthenticated}
+export {isAuthenticated}

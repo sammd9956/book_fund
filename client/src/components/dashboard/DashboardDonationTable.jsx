@@ -88,7 +88,7 @@ const donationData = [
   },
 ];
 
-export default function DashboardDonationTable() {
+export default function DashboardDonationTable({data = []}) {
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [thankSent, setThankSent] = useState({})
@@ -99,9 +99,9 @@ export default function DashboardDonationTable() {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
-  const filteredData = donationData
+  const filteredData = data
     .filter((item) =>
-      item.donor.toLowerCase().includes(search.toLowerCase())
+      item.contact_name.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) =>
       sortOrder === "asc"
@@ -172,7 +172,7 @@ export default function DashboardDonationTable() {
                   <TableCell className="py-6">
                     <div>
                       <h3 className="text-black font-bold text-[15px] font-poppins">
-                        {item.donor}
+                        {item.contact_name}
                       </h3>
 
                       <p className="text-black text-[15px] font-poppins">
@@ -181,7 +181,7 @@ export default function DashboardDonationTable() {
                     </div>
                   </TableCell>
                   <TableCell className="text-black text-[15px] font-poppins">
-                    {item.amount.toFixed(2)}
+                    {item.goal_amount}
                   </TableCell>
                   <TableCell className="text-black text-[15px] font-poppins italic">
                     {item.message}
