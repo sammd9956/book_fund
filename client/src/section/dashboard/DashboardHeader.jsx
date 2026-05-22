@@ -6,7 +6,7 @@ import { Eye, SquarePen } from 'lucide-react'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const DashboardHeader = () => {
+const DashboardHeader = ({myProfile}) => {
 
     const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ const DashboardHeader = () => {
                 
              </div>
                 <div className='flex flex-col lg:flex-row lg:items-center gap-[7px] lg:gap-[15px]'>
-                    <p className='text-gray-800 text-xl font-poppins font-bold'>My Class: <span className='font-normal'>Class Book Fund</span></p>
+                    <p className='text-gray-800 text-xl font-poppins font-bold'>My Class: <span className='font-normal'>{myProfile.fund_name}</span></p>
 
                     <p
                         onClick={() => navigate("/edit-campaign")}
@@ -41,7 +41,7 @@ const DashboardHeader = () => {
                 </div>
             </div>
             <div className='flex flex-col lg:flex-row lg:items-center gap-[12px] lg:gap-[30px] w-full lg:w-fit'>
-                <CopyCampaign />
+                <CopyCampaign donorId={myProfile.donor_id} />
                 <Navigate />
             </div>
         </div>

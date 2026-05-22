@@ -28,6 +28,8 @@ import MyTextArea from "../common/MyTextArea";
 import MyInput from "../common/MyInput";
 import MyButton from "../common/MyButton";
 import useDailogBox from "@/store/useDailogBox";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const donationData = [
   {
@@ -88,12 +90,27 @@ const donationData = [
   },
 ];
 
-export default function DashboardDonationTable({data = []}) {
+export default function DashboardDonationTable({data = [], setFlag}) {
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [thankSent, setThankSent] = useState({})
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [thanksData, setThanksData] = useState()
+   const initialState = {
+              donorName: "",
+              donorMail: "",
+              message: ""
+          }
+  
+  const [formData, setFormData] = useState(initialState);
+  const handleChange = (e) =>{
+        const {name, value} = e.target;
+        setFormData ((prev) => ({
+            ...prev,
+            [name]: value
+        }))
+    }
 
   const handleSort = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -101,7 +118,7 @@ export default function DashboardDonationTable({data = []}) {
 
   const filteredData = data
     .filter((item) =>
-      item.contact_name.toLowerCase().includes(search.toLowerCase())
+      item.donor_name.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) =>
       sortOrder === "asc"
@@ -115,6 +132,37 @@ export default function DashboardDonationTable({data = []}) {
         setGlobalDailogBoxOpenValue(openDialog);
     }, [openDialog, setOpenDialog]);
 
+    const sendThankHandle = async (id) => {
+      const res = await axios.get(`http://localhost:3000/api/v1/fund/get-fund-details/${id}`, {withCredentials: true});
+      
+      setThanksData(res.data.data);
+      setSelectedItem(id);
+      setOpenDialog(true);
+    }
+    
+    const mailConfirm = async () => {
+      try {
+        const payload = {
+          donorName: thanksData.donor_name,
+          email: thanksData.donor_email,
+          amount: thanksData.goal_amount,
+          bookFundID: thanksData.book_fund_id,
+          message: formData.message,
+        }
+      
+      
+        const res = await axios.post("http://localhost:3000/api/v1/fund/send-email", payload, {withCredentials: true} );
+        toast(res.data.message);
+        setOpenDialog(false)
+        setFlag(openDialog)
+        console.log(res.data);
+        
+      } catch (error) {
+        console.log(error);
+        
+      }      
+    }
+
   return (
     <div className="w-full max-w-6xl mx-auto rounded-[20px] overflow-hidden bg-card-border shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] lg:mb-8">
       {/* Header */}
@@ -122,6 +170,7 @@ export default function DashboardDonationTable({data = []}) {
         <h2 className="text-3xl font-bold text-white">
           Donations (0)
         </h2>
+        
         {/* Search */}
         <div className="relative w-full md:w-[340px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -166,13 +215,13 @@ export default function DashboardDonationTable({data = []}) {
             <TableBody>
               {filteredData.map((item) => (
                 <TableRow
-                  key={item.id}
+                  key={item.book_fund_id}
                   className="border-b-0 hover:bg-transparent"
                 >
                   <TableCell className="py-6">
                     <div>
                       <h3 className="text-black font-bold text-[15px] font-poppins">
-                        {item.contact_name}
+                        {item.donor_name}
                       </h3>
 
                       <p className="text-black text-[15px] font-poppins">
@@ -187,7 +236,7 @@ export default function DashboardDonationTable({data = []}) {
                     {item.message}
                   </TableCell>
                   <TableCell className="text-center">
-                    {thankSent[item.id] ? (
+                    {item.ac_flag != '0' ? (
                       <span className="text-spring-green font-semibold text-[15px] text-center">
                         Sent
                       </span>
@@ -199,10 +248,12 @@ export default function DashboardDonationTable({data = []}) {
                         //     [item.id]: true,
                         //   }))
                         // }
-                        onClick={() => {
+                        
+                        /* onClick={() => {
                           setSelectedItem(item);
                           setOpenDialog(true);
-                        }}
+                        } */
+                      onClick={() => sendThankHandle(item.book_fund_id)}
                         className="rounded-md px-4 py-2.5 text-lg bg-primary-color hover:bg-primary-color-dark shadow-md hover:cursor-pointer text-[13px] font-inter text-white font-semibold"
                       >
                         Send Thanks
@@ -240,26 +291,28 @@ export default function DashboardDonationTable({data = []}) {
             </button>
           </DialogHeader>
 
-          {selectedItem && (
+          {thanksData && (
             <div className="space-y-4">
                <div className='mb-[18px] lg:mb-[37px]'>
-                        <MyInput forId="Name" type="text" placeholder="Name Here" value="xyz" label="To:" labelStyle="font-semibold gap-0" />
-                        <MyInput forId="Email" type="email" placeholder="Email Here" value="xyz" label="" labelStyle="font-semibold gap-0" />
+                        <MyInput forId="Name" type="text" placeholder="Name Here" value={thanksData.donor_name} label="To:" labelStyle="font-semibold gap-0" />
+                        <MyInput forId="Email" type="email" placeholder="Email Here" value={thanksData.donor_email} label="" labelStyle="font-semibold gap-0" />
                     </div>
               <div className='mb-[18px] lg:mb-[30px]'>
                         <p className='font-poppins font-semibold text-base text-black mb-1'>Message (optional)</p>
-                        <MyTextArea style="p-4 bg-white border border-solid border-black !outline-0 focus:!ring-0 focus:ring-primary-color/40 focus:border-primary-color transition-all min-h-[100px] text-base text-gray-500" placeholder="Enter Your Message" />
+                        <MyTextArea style="p-4 bg-white border border-solid border-black !outline-0 focus:!ring-0 focus:ring-primary-color/40 focus:border-primary-color transition-all min-h-[100px] text-base text-gray-500" placeholder="Enter Your Message" name="message" value={formData.message} onChange={handleChange} />
                     </div>
 
 
               <div className="flex flex-col lg:flex-row items-center justify-center mx-auto gap-4 w-full">
-                <MyButton variant="primary" text="Confirm Send" onClick={() => {
+                {/* <MyButton variant="primary" text="Confirm Send" onClick={() => {
                   setThankSent((prev) => ({
                     ...prev,
                     [selectedItem.id]: true,
                   }));
                   setOpenDialog(false);
-                }} style="w-full flex-1"/>
+                }} style="w-full flex-1"/> */}
+                
+                <MyButton variant="primary" text="Confirm Send" onClick={() => mailConfirm(thanksData.donor_id)} style="w-full flex-1"/>
                 <MyButton  variant="outline" text="Cancel"  onClick={() => setOpenDialog(false)} style="w-full flex-1"/>
               </div>
             </div>

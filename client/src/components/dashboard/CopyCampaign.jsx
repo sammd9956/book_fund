@@ -2,10 +2,12 @@ import React from 'react'
 import { Share2 } from 'lucide-react'
 import { toast } from 'sonner';
 
-const CopyCampaign = () => {
-
+const CopyCampaign = ({donorId}) => {
   const handleCopyCampaignLink = async () => {
-    const currentLink = window.location.href;
+    // const currentLink = window.location.href;
+    const currentLink = `${window.location}/${donorId}`;
+    console.log("currr",currentLink);
+    
     try {
         await navigator.clipboard.writeText(currentLink);
         // alert("Campaign link copied!");

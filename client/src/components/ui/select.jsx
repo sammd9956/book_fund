@@ -102,6 +102,7 @@ function SelectItem({
   className,
   children,
   ...props
+  
 }) {
   return (
     <SelectPrimitive.Item

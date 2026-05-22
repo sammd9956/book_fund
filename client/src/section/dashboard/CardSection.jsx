@@ -81,7 +81,7 @@ const donationData = [
 ];
 
 
-const CardSection = () => {
+const CardSection = ({totalRaised}) => {
     const [checked, setChecked] = useState(false)
     const [openDialog, setOpenDialog] = useState(false);
     const [sortOrder, setSortOrder] = useState("asc");
@@ -108,7 +108,7 @@ const CardSection = () => {
         <div className='grid grid-cols-1 lg:grid-cols-3 gap-6 mb-[26px]'>
             <div className='bg-outline-border rounded-[20px] pt-9 pl-[38px] pr-[42px] pb-[54px] shadow-[0_4px_4px_0_rgba(0,0,0,0.25)]'>
                 <p className='text-xl font-poppins font-medium mb-[13px] text-white'>$ Total Raised</p>
-                <p className='text-[50px] font-poppins font-bold mb-[22px] text-white'>$500</p>
+                <p className='text-[50px] font-poppins font-bold mb-[22px] text-white'>${totalRaised}</p>
                 <p className='text-[15px] font-poppins font-light mb-[11px] text-white'>70% of $500 goal</p>
                 <Progress
                     value={70}

@@ -39,6 +39,7 @@ import {
 } from '../ui/select'
 
 const MySelect = ({ goalPrice, selectedGoal, setSelectedGoal }) => {
+  
   return (
     <div>
       <Select 
@@ -47,7 +48,9 @@ const MySelect = ({ goalPrice, selectedGoal, setSelectedGoal }) => {
       >
         <SelectTrigger className="w-full max-w-48 border border-gray-300 bg-white px-4 py-2 text-sm text-gray-500 rounded-md shadow-sm outline-none focus:ring-none focus:ring-primary-color/40 focus:border-primary-color transition-all">
           <SelectValue placeholder="Select Goal" className="text-xs font-medium text-gray-500"/>
+         
         </SelectTrigger>
+ 
 
         {/* <SelectContent className="bg-white border border-gray-300 rounded-lg shadow-lg p-1 animate-in fade-in zoom-in-95 !max-h-60 !overflow-y-auto"> */}
         <SelectContent
@@ -65,7 +68,7 @@ const MySelect = ({ goalPrice, selectedGoal, setSelectedGoal }) => {
               goalPrice.map((price, index) => (
                 <SelectItem
                   key={index}
-                  value={price}
+                  value={String(price)}
                   className="px-3 py-2 rounded-md cursor-pointer text-sm text-gray-800 
               hover:bg-primary-light hover:text-primary-color
               focus:bg-primary-light focus:text-primary-color

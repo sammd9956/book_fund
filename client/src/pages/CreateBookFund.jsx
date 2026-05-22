@@ -12,14 +12,15 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const CreateBookFund = () => {
-    const initialState = {
-        schoolName: "",
-        fundName: "",
-        role: "",
-        email: "",
-        password: "",
-        message: ""
-    }
+   const initialState = {
+    schoolName: "",
+    fundName: "",
+    role: "",
+    contactName: "",
+    email: "",
+    password: "",
+    message: ""
+}
     const [formData, setFormData] = useState(initialState);
     const [date, setDate] = useState(undefined);
     const [selectedGoal, setSelectedGoal] = useState("")
@@ -54,9 +55,9 @@ const CreateBookFund = () => {
             fundName: formData.fundName,
             startDate: fromDate,
             endDate: toDate,
-            contactName: formData.contactName,
-            contactEmail: formData.email,
-            fundPassword: formData.password,
+            donorName: formData.contactName,
+            donorEmail: formData.email,
+            donorPassword: formData.password,
             goalAmount: selectedGoal,
             message: formData.message
         }
@@ -66,7 +67,7 @@ const CreateBookFund = () => {
             alert("launched");
             // console.log(res.data.fundBy?.id)
             if(res){
-                navigate(`/dashboard`)
+                navigate(`/`)
             }
         } catch (error) {
             console.log(error.response.data);

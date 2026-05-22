@@ -5,13 +5,33 @@ import MySelect from '@/components/common/MySelect'
 import MyTextArea from '@/components/common/MyTextArea'
 import Profile from '@/components/common/Profile'
 import useWhoFundValue from '@/store/useWhoFundValue'
+import { formatMySQLDate } from '@/utils/feature'
+import axios from 'axios'
 import { ArrowBigLeft } from 'lucide-react'
-import React from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import toast from 'react-hot-toast'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 const EditCampaign = () => {
-
+    const [campaignDetails, setCampaignDetails] = useState()
+    const [date, setDate] = useState(undefined);
+    const [selectedGoal, setSelectedGoal] = useState("")
+    const initialState = {
+            fundName: "",
+            startDate: "",
+            endDate: "",
+            goal: "",
+            message: ""
+        }
+    const [formData, setFormData] = useState(initialState);
+       
     const navigate = useNavigate();
+    const params = useParams();
+    
+    const isEditMode = !!params.id;
+   
+    
+    
 
     const { radioBtnValue } = useWhoFundValue()
 
@@ -24,8 +44,105 @@ const EditCampaign = () => {
     const location = useLocation();
 
     const isCreatePage = location.pathname;
+    
 
-    const goalPrice = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000]
+    const goalPrice = [50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950, 1000];
+
+      const handleChange = (e) =>{
+        const {name, value} = e.target;
+        setFormData ((prev) => ({
+            ...prev,
+            [name]: value
+        }))
+    }
+
+    const handleCampaignCreate = async () => {
+         try {
+            const fromDate = date?.from ? formatMySQLDate(date.from) : "";
+                const toDate = date?.to ? formatMySQLDate(date.to) : "";
+                const campaignPayload = {
+                   
+                    fundName: formData.fundName,
+                    startDate: fromDate,
+                    endDate: toDate,
+                    goalAmount: selectedGoal,
+                    message: formData.message
+                }
+        const res = await axios.post("http://localhost:3000/api/v1/camp/new-campaign", campaignPayload, {withCredentials: true});
+        // console.log(res.data);
+        // console.log("aaaaa", campaignPayload.message);
+        toast.success(res.data.message);
+         } catch (error) {
+            console.log(error);
+            
+         }
+    }
+
+
+useEffect(() => {
+    const fetchCampaignById = async () => {
+        try {
+
+            const res = await axios.get(
+                `http://localhost:3000/api/v1/camp/get-campaign-by-id/${params.id}`,
+                { withCredentials: true }
+            );
+
+            const campaign = res.data.campaign;
+
+            setCampaignDetails(campaign);
+
+            setFormData({
+                fundName: campaign.fund_name || "",
+                startDate: campaign.start_date || "",
+                endDate: campaign.end_date || "",
+                goal: campaign.goal_amount || "",
+                message: campaign.message || ""
+            });
+
+            setSelectedGoal(campaign.goal_amount || "");
+             setSelectedGoal(String(Number(campaign.goal_amount || "")));
+
+            
+            setDate({ from: campaign.start_date ? new Date(campaign.start_date) : undefined,
+
+                to: campaign.end_date ? new Date(campaign.end_date) : undefined
+            });
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    if (params.id) {
+        fetchCampaignById();
+    }
+
+}, [params.id]);
+   
+
+const handleUpdate = async() => {
+    try {
+        const fromDate = date?.from ? formatMySQLDate(date.from) : "";
+    const toDate = date?.to ? formatMySQLDate(date.to) : "";
+    
+    const payload = {               
+            fundName: formData.fundName,
+            startDate: fromDate,
+            endDate: toDate,
+            goalAmount: selectedGoal,
+            message: formData.message,
+            id:params.id
+            }
+    const res = await axios.post("http://localhost:3000/api/v1/camp/update-campaign", payload, {withCredentials: true});
+    console.log(res.data);
+    toast.success(res.data.message)
+    
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
     return (
         <div className='mb-8 w-full'>
             <Profile />
@@ -44,33 +161,35 @@ const EditCampaign = () => {
                 </p>
                 <div className='border-[0.5px] border-solid border-black px-[24px] lg:px-[71px] pt-[19px] pb-10 rounded-[20px] lg:max-w-[600px] mx-auto bg-card-border relative z-50 w-full'>
                     {
-                        isCreatePage == '/create-new-campaign' ?
-                            <p className='text-center font-poppins font-bold text-[32px] text-gray-800 mb-[21px]'>Create a New Campaign</p>
-                            :
-                            <p className='text-center font-poppins font-bold text-[32px] text-gray-800 mb-[21px]'>Edit Your Campaign</p>
+                        // isCreatePage == '/create-new-campaign' ?
+                        isEditMode  ?
+                        <p className='text-center font-poppins font-bold text-[32px] text-gray-800 mb-[21px]'>Edit Your Campaign</p>
+                        :
+                        <p className='text-center font-poppins font-bold text-[32px] text-gray-800 mb-[21px]' >Create a New Campaign</p>
                     }
                     <div className='mb-[36px]'>
-                        <MyInput forId={nameForId} type="text" placeholder={namePlaceholder} value="xyz" label={nameLabel} labelStyle="font-semibold lg:min-w-[450px] gap-0" />
+                        <MyInput forId={nameForId} type="text" name="fundName" placeholder={namePlaceholder} value={formData.fundName} onChange={handleChange} label={nameLabel} labelStyle="font-semibold lg:min-w-[450px] gap-0" />
                     </div>
                     <div className='mb-[21px]'>
                         {/* <p className='font-poppins font-semibold text-base text-black mb-1'>Enter start and end date<span className='text-blood-red text-base font-semibold'>*</span></p> */}
                         <p className='font-poppins font-semibold text-base text-black mb-1'>{calenderLabel}</p>
-                        <MyCalendarRange />
+                        <MyCalendarRange date={date} setDate={setDate} />
                     </div>
                     <div className='mb-[21px]'>
                         <p className='font-poppins font-semibold text-base text-black mb-1'>Goal ($)</p>
-                        <MySelect goalPrice={goalPrice} />
+                        <MySelect goalPrice={goalPrice} selectedGoal={selectedGoal} setSelectedGoal={setSelectedGoal} />
                     </div>
                     <div className='mb-[26px]'>
                         <p className='font-poppins font-semibold text-base text-black mb-1'>Message (optional)</p>
-                        <MyTextArea style="p-4 bg-white border border-solid border-black !outline-0 focus:!ring-0 focus:ring-primary-color/40 focus:border-primary-color transition-all min-h-[100px] text-base text-gray-500" placeholder="Enter Your Message" />
+                        <MyTextArea style="p-4 bg-white border border-solid border-black !outline-0 focus:!ring-0 focus:ring-primary-color/40 focus:border-primary-color transition-all min-h-[100px] text-base text-gray-500" placeholder="Enter Your Message" name="message" value={formData.message} onChange={handleChange} />
                     </div>
 
                     {
-                        isCreatePage == '/create-new-campaign' ?
-                            <MyButton variant="primary" text="Create New Campaign" style="!px-6 !py-4 w-full" />
-                            :
-                            <MyButton variant="primary" text="Save" style="!px-6 !py-4 w-full" />
+                        // isCreatePage == '/create-new-campaign' ?
+                        isEditMode ?
+                        <MyButton variant="primary" text="Save" style="!px-6 !py-4 w-full" onClick={handleUpdate} />
+                        :
+                        <MyButton variant="primary" text="Create New Campaign" style="!px-6 !py-4 w-full" onClick={handleCampaignCreate} />
                     }
                 </div>
             </div>

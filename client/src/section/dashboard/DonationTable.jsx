@@ -1,9 +1,11 @@
 import DashboardDonationTable from '@/components/dashboard/DashboardDonationTable'
 import MyButton from '@/components/common/MyButton'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
 
-const DonationTable =  () => {
+const DonationTable =  ({setTotalRaised}) => {
+
+  const [flag, setFlag] = useState()
   const [allFundsData, setAllFundsData] = useState([])
   useEffect(() => {
   const fetchAllFund = async () => {
@@ -22,7 +24,20 @@ const DonationTable =  () => {
   };
 
   fetchAllFund();
-}, []);
+
+}, [flag]);
+const totalRaised = useMemo(() => {
+  return allFundsData.reduce(
+    (sum, fund) => sum + Number(fund.goal_amount || 0),
+    0
+  );
+}, [allFundsData]);
+
+useEffect(() => {
+  setTotalRaised(totalRaised);
+}, [totalRaised, setTotalRaised]);
+
+// console.log("rrrr",totalRaised);
   
   return (
     <>
@@ -31,7 +46,7 @@ const DonationTable =  () => {
          <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
       <div className='lg:col-span-2'>
     {/* <DashboardDonationTable /> */}
-    <DashboardDonationTable data={allFundsData} />
+    <DashboardDonationTable data={allFundsData} setFlag={setFlag}  />
       </div>
       <div className='bg-outline-border rounded-[20px] pt-[31px] pl-[26px] pr-[18px] pb-[54px] shadow-[0_4px_4px_0_rgba(0,0,0,0.25)] h-fit mb-6 lg:mb-0'>
         <p className='text-xl font-poppins font-semibold mb-[10px] text-white'>Share Your Campaign</p>
